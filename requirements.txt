@@ -1,0 +1,6 @@
+Flask==0.10
+gunicorn==19.7.1
+flask-restful
+tensorflow
+numpy
+scikit-image
