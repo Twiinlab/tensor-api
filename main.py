@@ -192,6 +192,7 @@ def simplifyImage(originalImage):
 
 myPrediction = predictFromUrlImage(imageURL4)
 print(myPrediction)
+
 # print(sih.fileList[int(myPrediction)])
 
 if __name__ == '__main__':
