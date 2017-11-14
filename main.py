@@ -31,7 +31,6 @@ from skimage.color import rgb2gray, rgb2grey, rgba2rgb
 
 app = Flask(__name__)
 
-
 from PIL import Image
 import base64
 import re
@@ -181,7 +180,6 @@ def predictFromDataImage(data):
         x = tf.placeholder(tf.float32,shape=[None,784])
         y_true = tf.placeholder(tf.float32,shape=[None,10])
 
-
         # Layers
         x_image = tf.reshape(x,[-1,28,28,1])
 
@@ -207,18 +205,20 @@ def predictFromDataImage(data):
         train = optimizer.minimize(cross_entropy)
 
         # restore the model
-        init = tf.global_variables_initializer()
+        sess.run(tf.global_variables_initializer())
         saver = tf.train.Saver()
-
-        # restore the model
         saver.restore(sess, "./STORED_model/my_trained_model.json")
+
+        # tf.reset_default_graph()
+        # new_saver = tf.train.import_meta_graph('./STORED_model/my_trained_model.json.meta')
+        # new_saver.restore(sess, tf.train.latest_checkpoint('./'))
         
         imageData = readGrayImageFromData(data)
         imageSimple = simplifyImage(imageData)
         
         feed_dict = {x: imageSimple, y_true: np.zeros((1, 10)), hold_prob : 0.5 }
         classification = sess.run(tf.argmax(y_pred,1), feed_dict)
-        
+
     return classification
 
 def predictFromUrlImage(imageUrl):
@@ -283,7 +283,7 @@ def simplifyImage(originalImage):
 # print(sih.fileList[int(myPrediction)])
 imageURL4 = 'https://firebasestorage.googleapis.com/v0/b/tensorweb-af554.appspot.com/o/test04.png?alt=media&token=b3a33d7e-9189-4255-9023-6ce6ba2d77df'
 
-@app.route('/hook', methods=['POST'])
+@app.route('/predict', methods=['POST'])
 def get_image():
     image_b64 = request.values['imageBase64']
     image_data = re.sub('^data:image/.+;base64,', '', image_b64)
